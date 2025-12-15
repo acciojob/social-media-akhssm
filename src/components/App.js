@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Switch, Route, Link, useParams, useHistory } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useParams,
+  useHistory
+} from "react-router-dom";
 
 const usersData = [
   { id: "1", name: "Alice" },
@@ -22,41 +29,41 @@ export default function App() {
   const [notifications, setNotifications] = useState([]);
 
   return (
-    <div className="App">
-      <h1>GenZ</h1>
+    <Router>
+      <div className="App">
+        <h1>GenZ</h1>
 
-      {/* NAVIGATION */}
-      <nav>
-        <a href="/">Posts</a>{" "}
-        <a href="/users">Users</a>{" "}
-        <a href="/notifications">Notifications</a>
-      </nav>
+        <nav>
+          <a href="/">Posts</a>{" "}
+          <a href="/users">Users</a>{" "}
+          <a href="/notifications">Notifications</a>
+        </nav>
 
-      <Switch>
-        <Route exact path="/">
-          <Posts posts={posts} setPosts={setPosts} />
-        </Route>
+        <Switch>
+          <Route exact path="/">
+            <Posts posts={posts} setPosts={setPosts} />
+          </Route>
 
-        <Route exact path="/posts/:id">
-          <PostDetail posts={posts} setPosts={setPosts} />
-        </Route>
+          <Route exact path="/posts/:id">
+            <PostDetail posts={posts} setPosts={setPosts} />
+          </Route>
 
-        <Route exact path="/users">
-          <Users posts={posts} />
-        </Route>
+          <Route exact path="/users">
+            <Users posts={posts} />
+          </Route>
 
-        <Route exact path="/notifications">
-          <Notifications
-            notifications={notifications}
-            setNotifications={setNotifications}
-          />
-        </Route>
-      </Switch>
-    </div>
+          <Route exact path="/notifications">
+            <Notifications
+              notifications={notifications}
+              setNotifications={setNotifications}
+            />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
-/* ---------------- POSTS PAGE ---------------- */
 
 function Posts({ posts, setPosts }) {
   const [title, setTitle] = useState("");
@@ -83,9 +90,11 @@ function Posts({ posts, setPosts }) {
   };
 
   const react = (postId, idx) => {
+    if (idx === 4) return; 
+
     setPosts(
       posts.map(p =>
-        p.id === postId && idx < 4
+        p.id === postId
           ? {
               ...p,
               reactions: p.reactions.map((r, i) =>
@@ -99,11 +108,9 @@ function Posts({ posts, setPosts }) {
 
   return (
     <>
-      {/* CREATE POST */}
       <div>
         <input
           id="postTitle"
-          placeholder="Post title"
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
@@ -123,7 +130,6 @@ function Posts({ posts, setPosts }) {
 
         <textarea
           id="postContent"
-          placeholder="Post content"
           value={content}
           onChange={e => setContent(e.target.value)}
         />
@@ -131,7 +137,6 @@ function Posts({ posts, setPosts }) {
         <button onClick={addPost}>Save Post</button>
       </div>
 
-      {/* POSTS LIST */}
       <div className="posts-list">
         <div></div>
 
@@ -140,7 +145,6 @@ function Posts({ posts, setPosts }) {
             <h3>{post.title}</h3>
             <p>{post.content}</p>
 
-            {/* REACTIONS */}
             {post.reactions.map((count, i) => (
               <button key={i} onClick={() => react(post.id, i)}>
                 {count}
@@ -157,13 +161,13 @@ function Posts({ posts, setPosts }) {
   );
 }
 
-/* ---------------- POST DETAIL ---------------- */
 
 function PostDetail({ posts, setPosts }) {
   const { id } = useParams();
   const history = useHistory();
 
   const post = posts.find(p => p.id === id);
+  if (!post) return null;
 
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
@@ -198,7 +202,6 @@ function PostDetail({ posts, setPosts }) {
   );
 }
 
-/* ---------------- USERS ---------------- */
 
 function Users({ posts }) {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -208,7 +211,7 @@ function Users({ posts }) {
       <ul>
         {usersData.map(u => (
           <li key={u.id} onClick={() => setSelectedUser(u.id)}>
-            <li>{u.name}</li>
+            {u.name}
           </li>
         ))}
       </ul>
@@ -226,7 +229,6 @@ function Users({ posts }) {
   );
 }
 
-/* ---------------- NOTIFICATIONS ---------------- */
 
 function Notifications({ notifications, setNotifications }) {
   const refresh = () => {
