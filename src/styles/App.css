@@ -1,1 +1,13 @@
+.posts-list {
+  margin-top: 20px;
+}
 
+.post {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.button {
+  margin-top: 10px;
+}
